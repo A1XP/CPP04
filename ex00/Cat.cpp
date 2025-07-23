@@ -1,10 +1,9 @@
 #include "Cat.hpp"
 #include <iostream>
 
-Cat::Cat()
+Cat::Cat() : Animal("Cat")
 {
-	this->_type = "Cat";
-	std::cout << _type << " has been created!" << std::endl;
+	std::cout << "Cat default constructor called" << std::endl;
 }
 
 Cat::Cat(const Cat& other) : Animal(other)

@@ -1,9 +1,8 @@
 #include "Dog.hpp"
 #include <iostream>
 
-Dog::Dog()
+Dog::Dog() : Animal("Dog")
 {
-	this->_type = "Dog";
 	_brain = new Brain();
 	std::cout << _type << " has been created!" << std::endl;
 }

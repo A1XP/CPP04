@@ -6,6 +6,11 @@ Animal::Animal() : _type("Animal")
 	std::cout << _type << " has been created!" << std::endl;
 }
 
+Animal::Animal(const std::string& type) : _type(type)
+{
+	std::cout << _type << " has been created!" << std::endl;
+}
+
 Animal::Animal(const Animal& other) : _type(other._type)
 {
 	std::cout << "Animal copy constructor called" << std::endl;
