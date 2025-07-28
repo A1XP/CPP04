@@ -1,5 +1,5 @@
-#ifndef AANIMAL_H
-#define AANIMAL_H
+#ifndef AANIMAL_HPP
+#define AANIMAL_HPP
 #include <string>
 
 class AAnimal
