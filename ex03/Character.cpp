@@ -1,16 +1,15 @@
 #include "Character.hpp"
 #include <iostream>
 
-Character::Character(const std::string& name) : _name(name), _floorCount(0)
+Character::Character(const std::string& name) : _name(name), _floorList(NULL)
 {
 	std::cout << "Character " << _name << " constructor called." << std::endl;
 	for (int i = 0; i < 4; ++i)
 		_inventory[i] = NULL;
-	for (int i = 0; i < 100; ++i)
-		_floorMaterias[i] = NULL;
+	
 }
 
-Character::Character(const Character& other) : _name(other._name)
+Character::Character(const Character& other) : _name(other._name), _floorList(NULL)
 {
 	std::cout << "Character copy constructor called." << std::endl;
 	for (int i = 0; i < 4; ++i)
@@ -20,14 +19,16 @@ Character::Character(const Character& other) : _name(other._name)
 		else
 			_inventory[i] = NULL;
 	}
-	_floorCount = other._floorCount;
-	for (int i = 0; i < _floorCount; ++i)
-	{
-		if (other._floorMaterias[i])
-			_floorMaterias[i] = other._floorMaterias[i]->clone();
-		else
-			_floorMaterias[i] = NULL;
-	}
+
+	FloorList* otherCurrent = other._floorList;
+    FloorList** thisCurrent = &_floorList;
+
+    while (otherCurrent)
+    {
+        *thisCurrent = new FloorList(otherCurrent->materia->clone());
+        thisCurrent = &((*thisCurrent)->next);
+		otherCurrent = otherCurrent->next;
+    }
 }
 
 Character& Character::operator=(const Character& other)
@@ -49,21 +50,21 @@ Character& Character::operator=(const Character& other)
 				_inventory[i] = NULL;
 		}
 	}
-	for (int i = 0; i < _floorCount; ++i)
+	while (_floorList)
 	{
-		if (_floorMaterias[i])
-		{
-			delete _floorMaterias[i];
-			_floorMaterias[i] = NULL;
-		}
+		FloorList* tmp = _floorList->next;
+		delete _floorList->materia;
+		delete _floorList;
+		_floorList = tmp;
 	}
-	_floorCount = other._floorCount;
-	for (int i = 0; i < _floorCount; ++i)
+	FloorList* otherCurrent = other._floorList;
+	FloorList** thisCurrent = &_floorList;
+
+	while (otherCurrent)
 	{
-		if (other._floorMaterias[i])
-			_floorMaterias[i] = other._floorMaterias[i]->clone();
-		else
-			_floorMaterias[i] = NULL;
+		*thisCurrent = new FloorList(otherCurrent->materia->clone());
+		thisCurrent = &((*thisCurrent)->next);
+		otherCurrent = otherCurrent->next;
 	}
 	return (*this);
 }
@@ -79,14 +80,16 @@ Character::~Character()
 			delete _inventory[i];
 		}
 	}
-	for (int i = 0; i < _floorCount; ++i)
+	FloorList* current = _floorList;
+	while (current)
 	{
-		if (_floorMaterias[i])
-		{
-			std::cout << "Floor slot " << i << " of " << _floorMaterias[i]->getType() << " was deleted." << std::endl;
-			delete _floorMaterias[i];
-		}
+		FloorList* next = current->next;
+		std::cout << "Dropped materia " << current->materia->getType() << " was deleted." << std::endl;
+		delete current->materia;
+		delete current;
+		current = next;
 	}
+	_floorList = NULL;
 }
 
 std::string const & Character::getName() const
@@ -123,13 +126,9 @@ void Character::unequip(int idx)
 		std::cout << "Can't unequip empty slot : " << idx << std::endl;
 		return;
 	}
-	if (_floorCount >= 100)
-	{
-		std::cout << "Floor is full, cannot drop materia." << std::endl;
-		return;
-	}
-
-	_floorMaterias[_floorCount++] = _inventory[idx];
+	FloorList* newNode = new FloorList(_inventory[idx]);
+    newNode->next = _floorList;
+    _floorList = newNode;
 	std::cout << _inventory[idx]->getType() << " was dropped on the floor from slot " << idx << std::endl;
 	_inventory[idx] = NULL;
 }

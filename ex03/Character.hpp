@@ -4,13 +4,20 @@
 #include <string>
 #include "ICharacter.hpp"
 
+struct FloorList
+{
+	AMateria* materia;
+	FloorList* next;
+
+	FloorList(AMateria* m) : materia(m), next(NULL) {}
+};
+
 class Character : public ICharacter
 {
 private:
 	std::string _name;
 	AMateria* _inventory[4];
-	AMateria* _floorMaterias[100];
-	int _floorCount;
+	FloorList* _floorList;
 public:
 	Character(const std::string& name);
 	Character(const Character& other);
