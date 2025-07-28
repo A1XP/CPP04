@@ -5,15 +5,15 @@ Ice::Ice() : AMateria("ice")
 {
 	std::cout << "Ice constructor called." << std::endl;
 }
-Ice::Ice(const Ice& other) : AMateria(other)
+Ice::Ice(const Ice& other) : AMateria("ice")
 {
+	(void)other;
 	std::cout << "Ice copy constructor called." << std::endl;
 }
 Ice& Ice::operator=(const Ice& other)
 {
+	(void)other;
 	std::cout << "Ice copy assignment operator called." << std::endl;
-	if (this != &other)
-		AMateria::operator=(other);
 	return (*this);
 }
 

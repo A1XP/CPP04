@@ -5,15 +5,15 @@ Cure::Cure() : AMateria("cure")
 {
 	std::cout << "Cure constructor called." << std::endl;
 }
-Cure::Cure(const Cure& other) : AMateria(other)
+Cure::Cure(const Cure& other) : AMateria("cure")
 {
+	(void)other;
 	std::cout << "Cure copy constructor called." << std::endl;
 }
 Cure& Cure::operator=(const Cure& other)
 {
+	(void)other;
 	std::cout << "Cure copy assignment operator called." << std::endl;
-	if (this != &other)
-		AMateria::operator=(other);
 	return (*this);
 }
 

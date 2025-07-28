@@ -1,11 +1,13 @@
 #include "Character.hpp"
 #include <iostream>
 
-Character::Character(const std::string& name) : _name(name)
+Character::Character(const std::string& name) : _name(name), _floorCount(0)
 {
 	std::cout << "Character " << _name << " constructor called." << std::endl;
 	for (int i = 0; i < 4; ++i)
 		_inventory[i] = NULL;
+	for (int i = 0; i < 100; ++i)
+		_floorMaterias[i] = NULL;
 }
 
 Character::Character(const Character& other) : _name(other._name)
@@ -17,6 +19,14 @@ Character::Character(const Character& other) : _name(other._name)
 			_inventory[i] = other._inventory[i]->clone();
 		else
 			_inventory[i] = NULL;
+	}
+	_floorCount = other._floorCount;
+	for (int i = 0; i < _floorCount; ++i)
+	{
+		if (other._floorMaterias[i])
+			_floorMaterias[i] = other._floorMaterias[i]->clone();
+		else
+			_floorMaterias[i] = NULL;
 	}
 }
 
@@ -39,6 +49,22 @@ Character& Character::operator=(const Character& other)
 				_inventory[i] = NULL;
 		}
 	}
+	for (int i = 0; i < _floorCount; ++i)
+	{
+		if (_floorMaterias[i])
+		{
+			delete _floorMaterias[i];
+			_floorMaterias[i] = NULL;
+		}
+	}
+	_floorCount = other._floorCount;
+	for (int i = 0; i < _floorCount; ++i)
+	{
+		if (other._floorMaterias[i])
+			_floorMaterias[i] = other._floorMaterias[i]->clone();
+		else
+			_floorMaterias[i] = NULL;
+	}
 	return (*this);
 }
 
@@ -51,6 +77,14 @@ Character::~Character()
 		{
 			std::cout << "Slot " << i << " of " << _inventory[i]->getType() << " was deleted." << std::endl;
 			delete _inventory[i];
+		}
+	}
+	for (int i = 0; i < _floorCount; ++i)
+	{
+		if (_floorMaterias[i])
+		{
+			std::cout << "Floor slot " << i << " of " << _floorMaterias[i]->getType() << " was deleted." << std::endl;
+			delete _floorMaterias[i];
 		}
 	}
 }
@@ -79,24 +113,25 @@ void Character::equip(AMateria* m)
 
 void Character::unequip(int idx)
 {
-	if (idx < 0 ||idx > 3)
+	if (idx < 0 || idx > 3)
 	{
 		std::cout << "Invalid slot index : " << idx << std::endl;
 		return;
 	}
-	else 
+	if (!_inventory[idx])
 	{
-		if (_inventory[idx])
-		{
-			std::cout << _inventory[idx]->getType() << " was dropped on the floor from slot " << idx << std::endl;
-			_inventory[idx] = NULL;
-		}
-		else
-		{
-			std::cout << "Can't unequip empty slot : " << idx << std::endl;
-			return;
-		}
+		std::cout << "Can't unequip empty slot : " << idx << std::endl;
+		return;
 	}
+	if (_floorCount >= 100)
+	{
+		std::cout << "Floor is full, cannot drop materia." << std::endl;
+		return;
+	}
+
+	_floorMaterias[_floorCount++] = _inventory[idx];
+	std::cout << _inventory[idx]->getType() << " was dropped on the floor from slot " << idx << std::endl;
+	_inventory[idx] = NULL;
 }
 
 void Character::use(int idx, ICharacter& target)

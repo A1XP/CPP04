@@ -5,7 +5,7 @@ MateriaSource::MateriaSource()
 {
 	std::cout << "MateriaSource constructor called." << std::endl;
 	for (int i = 0; i < 4; ++i)
-		_materia[i] = NULL;
+		_materias[i] = NULL;
 }
 
 MateriaSource::MateriaSource(const MateriaSource& other)
@@ -13,10 +13,10 @@ MateriaSource::MateriaSource(const MateriaSource& other)
 	std::cout << "MateriaSource copy constructor called." << std::endl;
 	for (int i = 0; i < 4; ++i)
 	{
-		if (other._materia[i])
-			_materia[i] = other._materia[i]->clone();
+		if (other._materias[i])
+			_materias[i] = other._materias[i]->clone();
 		else
-			_materia[i] = NULL;
+			_materias[i] = NULL;
 	}
 }
 MateriaSource& MateriaSource::operator=(const MateriaSource& temp)
@@ -26,15 +26,15 @@ MateriaSource& MateriaSource::operator=(const MateriaSource& temp)
 	{
 		for (int i = 0; i < 4; ++i)
 		{
-			if (_materia[i])
+			if (_materias[i])
 			{
-				delete _materia[i];
-				_materia[i] = NULL;
+				delete _materias[i];
+				_materias[i] = NULL;
 			}
-			if (temp._materia[i])
-				_materia[i] = temp._materia[i]->clone();
+			if (temp._materias[i])
+				_materias[i] = temp._materias[i]->clone();
 			else
-				_materia[i] = NULL;
+				_materias[i] = NULL;
 		}
 	}
 	return (*this);
@@ -44,8 +44,8 @@ MateriaSource::~MateriaSource()
 {
 	std::cout << "MateriaSource destructor called." << std::endl;
 	for (int i = 0; i < 4; i++)
-		if (_materia[i])
-			delete _materia[i];
+		if (_materias[i])
+			delete _materias[i];
 }
 
 void MateriaSource::learnMateria(AMateria* m)
@@ -55,10 +55,10 @@ void MateriaSource::learnMateria(AMateria* m)
 
 	for (int i = 0; i < 4; ++i)
 	{
-		if (!_materia[i])
+		if (!_materias[i])
 		{
-			_materia[i] = m->clone();
-			std::cout << _materia[i]->getType() << " materia was learned by index " << i << std::endl;
+			_materias[i] = m->clone();
+			std::cout << _materias[i]->getType() << " materia was learned by index " << i << std::endl;
 			return;
 		}
 	}
@@ -69,9 +69,9 @@ AMateria* MateriaSource::createMateria(std::string const& type)
 {
 	for (int i = 0; i < 4; ++i)
 	{
-		if (_materia[i] && type == _materia[i]->getType())
+		if (_materias[i] && type == _materias[i]->getType())
 		{
-			AMateria* created = _materia[i]->clone();
+			AMateria* created = _materias[i]->clone();
 			if (created)
 			{
 				std::cout << type << " materia was created" << std::endl;
